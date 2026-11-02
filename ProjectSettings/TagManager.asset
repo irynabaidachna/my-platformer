@@ -8,10 +8,10 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Hazard
   - Water
   - UI
-  - 
+  - Interactable
   - 
   - Ground
   - 
@@ -47,6 +47,9 @@ TagManager:
   - name: Environment
     uniqueID: 523676177
     locked: 0
+  - name: Ground
+    uniqueID: 3371107387
+    locked: 0
   - name: Player
     uniqueID: 365457569
     locked: 0
@@ -55,6 +58,12 @@ TagManager:
     locked: 0
   - name: Foreground
     uniqueID: 861191683
+    locked: 0
+  - name: Decor
+    uniqueID: 1920303901
+    locked: 0
+  - name: Hazards
+    uniqueID: 886735435
     locked: 0
   m_RenderingLayers:
   - Default
