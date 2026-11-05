@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using Unity.Cinemachine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -67,7 +68,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(1f, 20f)]
     private float hardLandingSpeed = 9f;
 
-    [SerializeField] private CameraShake cameraShake;
+    [SerializeField] private CinemachineImpulseSource impulseSource;
 
     private bool wasGrounded;
     private float fallSpeed;
@@ -86,7 +87,11 @@ public class PlayerController : MonoBehaviour
     private float stepTimer;
 
 
-
+    [Header("Взаємодія")]
+    [SerializeField] private Transform interactPoint;
+    [SerializeField, Range(0.2f, 1.5f)]
+    private float interactRadius = 0.6f;
+    [SerializeField] private LayerMask interactableLayer;
 
     private float JumpVelocity =>
         Mathf.Sqrt(
@@ -150,11 +155,29 @@ public class PlayerController : MonoBehaviour
         controls.Dispose();
     }
 
+    // Перевірка інтерактивного об'єкта поруч із лицарем
+    private void TryInteract()
+    {
+        Collider2D hit = Physics2D.OverlapCircle(
+            interactPoint.position,
+            interactRadius,
+            interactableLayer
+        );
+
+        if (hit != null &&
+            hit.TryGetComponent<IInteractable>(out var target))
+        {
+            target.Interact();
+        }
+    }
 
     private void Update()
     {
         isGrounded = CheckGround();
         CheckLanding();
+        // Взаємодія з об'єктами клавішею E
+        if (controls.Player.Interact.WasPressedThisFrame())
+            TryInteract();
 
         // Coyote Time
         bool canRefill =
@@ -267,8 +290,8 @@ public class PlayerController : MonoBehaviour
         if (speed < hardLandingSpeed)
             return;
 
-        if (cameraShake != null)
-            cameraShake.Shake(0.12f, 0.12f);
+        if (impulseSource != null)
+            impulseSource.GenerateImpulseWithForce(0.3f);
     }
 
     private void PlayFootstep()
